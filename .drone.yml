@@ -1,0 +1,147 @@
+---
+kind: pipeline
+name: default
+
+platform:
+    os: linux
+    arch: amd64
+
+steps:
+    - name: unit test
+      image: node:15-alpine
+      commands:
+          - echo $DRONE_REPO_NAME # ts-clean-arch
+          - echo $DRONE_REPO # tools/ts-clean-arch
+          - echo $DRONE_REPO_NAMESPACE # tools
+          - echo $DRONE_REPO_OWNER # tools
+          - echo $DRONE_DEPLOY_TO # 
+          - apk add --no-cache git
+          - apk add g++ make python
+          - npm ci --include=dev
+          - npm run test
+
+    - name: sonar-scanner
+      image: aosapps/drone-sonar-plugin:1.1
+      settings:
+          sonar_host:
+              from_secret: sonar_host
+          sonar_token:
+              from_secret: sonar_token
+          sources: src
+          level: DEBUG
+          showProfiling: true
+      commands:
+          - export DRONE_BUILD_NUMBER="${DRONE_TAG:-${DRONE_BRANCH}}-${DRONE_COMMIT:0:7}"
+          - /bin/drone-sonar
+
+    # - name: docker build & publish - main
+    #   image: plugins/docker:latest
+    #   environment:
+    #       DOCKER_USER:
+    #           from_secret: docker_username
+    #       DOCKER_PWD:
+    #           from_secret: docker_password
+    #       DOCKER_REG:
+    #           from_secret: docker_registry
+    #   commands:
+    #       - echo $DOCKER_REG
+    #       - docker login -u $DOCKER_USER -p $DOCKER_PWD $DOCKER_REG
+    #       - docker build -t $DOCKER_REG/$DRONE_REPO:latest .
+    #       - docker push $DOCKER_REG/$DRONE_REPO:latest
+    #   volumes:
+    #       - name: dockersock
+    #         path: /var/run/docker.sock
+    #   when:
+    #       branch:
+    #           - main
+              
+    # - name: jira
+    #   image: plugins/jira
+    #   settings:
+    #       client_id:
+    #           from_secret: jira_client_id
+    #       client_secret:
+    #           from_secret: jira_client_secret
+    #       project: SEEKS
+    #       environment: test
+    #       log_level: DEBUG
+    #   commands:
+    #       - echo $DRONE_REPO_NAME # ts-clean-arch
+    #       - echo $DRONE_REPO # test/ts-clean-arch
+    #       - echo $DRONE_REPO_NAMESPACE # test
+    #       - echo $DRONE_REPO_OWNER # test
+    #       - echo $DRONE_COMMIT # 
+    #       - echo $DRONE_COMMIT_AFTER # 
+    #       - echo $DRONE_COMMIT_AUTHOR # 
+    #       - echo $DRONE_COMMIT_AUTHOR_AVATAR # 
+    #       - echo $DRONE_COMMIT_AUTHOR_EMAIL # 
+    #       - echo $DRONE_COMMIT_AUTHOR_NAME # 
+    #       - echo $DRONE_COMMIT_BEFORE # 
+    #       - echo $DRONE_COMMIT_BRANCH # 
+    #       - echo $DRONE_COMMIT_LINK # 
+    #       - echo $DRONE_COMMIT_MESSAGE # 
+    #       - echo $DRONE_COMMIT_REF # 
+    #       - echo $DRONE_COMMIT_SHA # 
+    #       - echo $DRONE_DEPLOY_TO # 
+    #       - echo $DRONE_SEMVER # 
+    #       - echo $DRONE_STAGE_KIND # 
+    #       - echo $DRONE_STEP_NUMBER # 
+    #       - echo $DRONE_TAG # 
+    #       - echo $PLUGIN_CLOUD_ID # 
+    #       - echo $PLUGIN_CLIENT_ID # 
+    #       - echo $PLUGIN_CLIENT_SECRET # 
+    #       - echo $PLUGIN_PROJECT # 
+    #       - echo $PLUGIN_PIPELINE # 
+    #       - echo $PLUGIN_ENVIRONMENT # 
+    #       - echo $PLUGIN_STATE # 
+    #   when:
+    #       branch:
+    #           - main
+
+    - name: docker build & publish - tag
+      image: plugins/docker:latest
+      environment:
+          DOCKER_USER:
+              from_secret: docker_username
+          DOCKER_PWD:
+              from_secret: docker_password
+          DOCKER_REG:
+              from_secret: docker_registry
+      commands:
+          - docker login -u $DOCKER_USER -p $DOCKER_PWD $DOCKER_REG
+          - docker build -t $DOCKER_REG/$DRONE_REPO:$DRONE_TAG .
+          - docker push $DOCKER_REG/$DRONE_REPO:$DRONE_TAG
+      volumes:
+          - name: dockersock
+            path: /var/run/docker.sock
+      when:
+          event:
+              - tag
+
+    - name: helm_push_museum
+      image: izdock/drone-chartmuseum
+      environment:
+          DOCKER_USER:
+              from_secret: docker_username
+          DOCKER_PWD:
+              from_secret: docker_password
+          DOCKER_REG:
+              from_secret: docker_registry
+      commands:
+        - cd helm/$DRONE_REPO_NAME
+        - echo $DRONE_TAG
+        - sed -i 's/'tag:' .*/'tag:' ${DRONE_TAG}/g' values.yaml
+        - sed -i 's/'version:' .*/'version:' ${DRONE_TAG}/g' Chart.yaml
+        - cat values.yaml
+        - cat Chart.yaml
+        - helm repo add $DRONE_REPO_NAMESPACE https://$DOCKER_USER:$DOCKER_PWD@$DOCKER_REG/chartrepo/$DRONE_REPO_NAMESPACE
+        - helm repo list
+        - helm push . $DRONE_REPO_NAMESPACE
+      when:
+        event:
+        - tag
+
+volumes:
+    - name: dockersock
+      host:
+          path: /var/run/docker.sock
