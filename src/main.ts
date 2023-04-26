@@ -1,7 +1,10 @@
-import { App } from "./server/app";
+import "reflect-metadata";
+import IoCContainer from "./DI-container";
+import { App } from "./services/express/app";
 
 async function main() {
-    new App();
+    const app: App = IoCContainer.resolve<App>(App);
+    app.run();
 }
 main();
 

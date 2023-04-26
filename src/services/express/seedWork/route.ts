@@ -1,5 +1,7 @@
 import { Router } from "express";
+import { injectable } from "inversify";
 
+@injectable()
 export abstract class Route {
     protected router = Router();
     protected abstract setRoutes(): void;
