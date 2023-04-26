@@ -4,7 +4,7 @@ ts-clean-arch
 試著將自己理解的clean architecture 跟 DDD (Domain Driven Design) 用 Nodejs 做出簡單的開發架構。
 
 ### 主要有:
-- 不被 express, nestjs 等 External Service 耦合影養。
+- 不被 express, nestjs 等 External Service 耦合影響。
 - Domain Layer, Application Layer, Infrastructure Layer 分層
 - 對外 External Service 另外分一層，先用Express。
 
