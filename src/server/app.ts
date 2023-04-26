@@ -8,7 +8,7 @@ export class App {
         this.app = express();
         const appRoute = new AppRoute();
         this.app.use(appRoute.getPrefix(), appRoute.getRouter());
-        this.app.listen(3000, () => {
+        this.app.listen(3010, () => {
             console.log('App is running in debug mode');
         })
     }
