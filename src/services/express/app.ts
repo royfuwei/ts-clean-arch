@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 @injectable()
 export class App {
     public app: Application;
-    // public app: Application;
+    public port: number = 3010;
 
     private _appRoute: AppRoute;
 
@@ -18,8 +18,8 @@ export class App {
 
     public run() {
         this.app.use(this._appRoute.getPrefix(), this._appRoute.getRouter());
-        this.app.listen(3010, () => {
-            console.log('App is running in debug mode');
+        this.app.listen(this.port, () => {
+            console.log(`App is running at http://localhost:${this.port}`);
         })
     }
 }
