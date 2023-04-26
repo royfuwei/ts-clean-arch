@@ -65,6 +65,15 @@ container.bind<IAppUseCase>(Symbol.for('IAppUseCase')).to(AppUseCase);
 
 ```
 
+### webpack
+
+```sh
+npm i --save-dev webpack webpack-cli webpack-node-externals start-server-nestjs-webpack-plugin clean-webpack-plugin
+npm i --save-dev ts-loader
+```
+
+> InversifyJS 無法用webpack hmr
+
 ### typeorm
 
 ```sh
