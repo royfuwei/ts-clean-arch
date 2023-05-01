@@ -1,10 +1,10 @@
 import { injectable, inject } from "inversify";
-import { Route } from "../seedWork/route";
+import { BaseRoute } from "../seedWork/route";
 import { AppController } from "../controllers/app.controller";
 import { NextFunction, Request, Response } from "express";
 
 @injectable()
-export class AppRoute extends Route {
+export class AppRoute extends BaseRoute {
 
     constructor(
         @inject(AppController) private readonly controller: AppController,
