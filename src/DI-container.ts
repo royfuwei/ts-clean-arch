@@ -11,15 +11,6 @@ const IoCContainer = new Container();
  * IoC 控制 取用 DI的 Default
  * @param container inversify's Container
  */
-const getCommonContainer = (container: Container): void => {
-    container.bind<AppRoute>(AppRoute).toSelf();
-}
-getCommonContainer(IoCContainer);
-
-/**
- * IoC 控制 取用 DI的 Default
- * @param container inversify's Container
- */
 const getDefaultContainer = (container: Container): void => {
     container.bind<IAppUseCase>(Symbol.for('IAppUseCase')).to(AppUseCase);
 }

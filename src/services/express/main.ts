@@ -1,8 +1,6 @@
-import IoCContainer from "../../DI-container";
-import { App } from "./app";
+import { server } from "./server";
 
 async function main() {
-    const app: App = IoCContainer.resolve<App>(App);
-    app.run();
+    server();
 }
 main();

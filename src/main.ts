@@ -1,10 +1,9 @@
 import "reflect-metadata";
 import IoCContainer from "./DI-container";
-import { App } from "./services/express/app";
+import { server } from "./services/express/server";
 
 async function main() {
-    const app: App = IoCContainer.resolve<App>(App);
-    app.run();
+    server();
 }
 main();
 
