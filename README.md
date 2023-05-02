@@ -4,7 +4,7 @@ ts-clean-arch
 試著將自己理解的clean architecture 跟 DDD (Domain Driven Design) 用 Nodejs 做出簡單的開發架構。
 
 ### 主要有:
-- 不被 express, nestjs 等 External Service 耦合影響。
+- 不被 express 等 External Service 耦合影響。
 - Domain Layer, Application Layer, Infrastructure Layer 分層
 - 對外 External Service 另外分一層，先用Express。
 
@@ -30,8 +30,6 @@ npm install typescript @types/node
 npx tsc --init
 npm install ts-node nodemon --save-dev
 ```
-
-- [【TypeScript】從頭建立屬於你的 TypeScript 專案](https://nijialin.com/2020/09/19/how-to-build-typescript/)
 
 
 ### IoC
@@ -70,6 +68,13 @@ container.bind<IAppUseCase>(Symbol.for('IAppUseCase')).to(AppUseCase);
 ```sh
 npm i --save-dev webpack webpack-cli webpack-node-externals start-server-nestjs-webpack-plugin clean-webpack-plugin
 npm i --save-dev ts-loader
+```
+
+### tsoa
+
+```sh
+npm i tsoa swagger-ui-express
+npm i --save-dev @types/swagger-ui-express
 ```
 
 > InversifyJS 無法用webpack hmr
