@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/main.ts",
-    "dev:webpack": "webpack --config webpack.config.js",
+    "dev": "npm run doc & webpack --config webpack.config.js",
+    "doc": "tsoa spec -c tsoa.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -19,10 +19,13 @@
     "inversify": "^6.0.1",
     "mssql": "^7.2.1",
     "reflect-metadata": "^0.1.13",
+    "swagger-ui-express": "^4.6.2",
+    "tsoa": "^5.1.1",
     "typeorm": "^0.2.37",
     "typescript": "^4.4.3"
   },
   "devDependencies": {
+    "@types/swagger-ui-express": "^4.1.3",
     "clean-webpack-plugin": "^4.0.0",
     "nodemon": "^2.0.12",
     "start-server-nestjs-webpack-plugin": "^2.2.5",

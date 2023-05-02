@@ -1,8 +1,13 @@
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
 import { IAppUseCase } from "../../../application/Modules/app/interfaces/iAppUseCase";
+import {
+    Get,
+    Route,
+  } from "tsoa";
 
 @injectable()
+@Route()
 export class AppController {
 
     constructor(
@@ -11,9 +16,9 @@ export class AppController {
 
 
     /**
-     * controller func
-     * 把 usecase, router 放在一起變成controller
+     * 
      */
+    @Get()
     async getAppName() {
         return this.appUseCase.getAppName();
     }
