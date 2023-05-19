@@ -4,11 +4,12 @@ import * as swaggerUi from 'swagger-ui-express';
 import express, { Application } from "express";
 import { AppRoute } from "./routes/app.route";
 import { inject, injectable } from "inversify";
+import configs from '../../configs';
 
 @injectable()
 export class App {
     public app: Application;
-    public port: number = 3010;
+    public port: number = configs.port;
 
 
     constructor(
