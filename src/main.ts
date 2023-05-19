@@ -3,7 +3,7 @@ import IoCContainer from "./DI-container";
 import { server } from "./services/express/server";
 
 async function main() {
-    server();
+    await server();
 }
 main();
 
