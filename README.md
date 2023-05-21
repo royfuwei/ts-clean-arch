@@ -63,11 +63,6 @@ container.bind<IAppUseCase>(Symbol.for('IAppUseCase')).to(AppUseCase);
 
 ```
 
-### tsc-watch
-```sh
-npm i --save-dev tsc-watch
-```
-
 ### webpack
 
 ```sh
